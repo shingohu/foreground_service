@@ -59,21 +59,25 @@ public class ForegroundService extends Service {
             Intent launchIntent = getPackageManager().getLaunchIntentForPackage(getPackageName());
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, PendingIntent.FLAG_IMMUTABLE);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
-            builder.setNumber(0)
-                    .setContentIntent(pendingIntent)
-                    .setAutoCancel(false)
-                    .setOngoing(true);
-            if (notificationDetail.icon != null) {
+            if (notificationDetail.icon != null && getDrawableResourceId(this, notificationDetail.icon) != 0) {
                 builder.setSmallIcon(getDrawableResourceId(this, notificationDetail.icon));
+            } else {
+                builder.setSmallIcon(getApplicationInfo().icon);
             }
             if (notificationDetail.title != null) {
                 builder.setContentTitle(notificationDetail.title);
+            } else {
+                builder.setContentTitle(getApplicationInfo().name);
             }
             if (notificationDetail.body != null) {
                 builder.setContentText(notificationDetail.body);
             }
-
-            builder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
+            builder.setNumber(0)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(false)
+                    .setSilent(true)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+                    .setOngoing(true);
 
 
             Notification notification = builder.build();
