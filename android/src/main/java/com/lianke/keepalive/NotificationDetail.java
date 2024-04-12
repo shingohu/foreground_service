@@ -1,4 +1,4 @@
-package com.lianke.foreground_service;
+package com.lianke.keepalive;
 
 import java.io.Serializable;
 import java.util.Map;

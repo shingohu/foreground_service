@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:foreground_service/foreground_service.dart';
+import 'package:keep_alive_service/keep_alive_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,25 +23,27 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('前台服务'),
+          title: const Text('保活服务'),
         ),
         body: Center(
           child: Column(
             children: [
               TextButton(
                 onPressed: () {
-                  ForegroundService.start(
-                      wakeLock: true,
-                      notificationDetail: NotificationDetail(
-                          title: "测试", body: "好的", icon: "ic_launcher"));
+                  KeepAliveService.start(
+                      androidConfig: AndroidConfig(
+                          wakeLock: true,
+                          title: "KeepAlive",
+                          body: "Running",
+                          icon: "ic_launcher"));
                 },
-                child: Text("启动前台服务"),
+                child: Text("启动保活服务"),
               ),
               TextButton(
                 onPressed: () {
-                  ForegroundService.stop();
+                  KeepAliveService.stop();
                 },
-                child: Text("停止前台服务"),
+                child: Text("停止保活服务"),
               ),
             ],
           ),

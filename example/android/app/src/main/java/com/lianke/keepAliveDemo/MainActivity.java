@@ -1,4 +1,4 @@
-package com.lianke.foreground_service_example;
+package com.lianke.keepAliveDemo;
 
 import io.flutter.embedding.android.FlutterActivity;
 

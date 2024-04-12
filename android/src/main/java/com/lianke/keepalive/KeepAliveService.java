@@ -1,4 +1,4 @@
-package com.lianke.foreground_service;
+package com.lianke.keepalive;
 
 import android.Manifest;
 import android.app.Notification;
@@ -18,7 +18,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.PermissionChecker;
 
 
-public class ForegroundService extends Service {
+public class KeepAliveService extends Service {
 
     private static final String NOTIFICATION_CHANNEL_NAME = "ForegroundService";
     private static final int NOTIFICATION_ID = 10091;
@@ -71,6 +71,8 @@ public class ForegroundService extends Service {
             }
             if (notificationDetail.body != null) {
                 builder.setContentText(notificationDetail.body);
+            } else {
+                builder.setContentText("");
             }
             builder.setNumber(0)
                     .setContentIntent(pendingIntent)

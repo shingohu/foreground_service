@@ -30,7 +30,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  foreground_service:
+  keep_alive_service:
     dependency: "direct main"
     description:
       path: ".."

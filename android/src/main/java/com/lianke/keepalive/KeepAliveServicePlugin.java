@@ -1,4 +1,4 @@
-package com.lianke.foreground_service;
+package com.lianke.keepalive;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +18,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 /**
  * ForegroundServicePlugin
  */
-public class ForegroundServicePlugin implements FlutterPlugin, MethodCallHandler {
+public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -28,7 +28,7 @@ public class ForegroundServicePlugin implements FlutterPlugin, MethodCallHandler
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "foreground_service");
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "keep_alive_service");
         channel.setMethodCallHandler(this);
         context = flutterPluginBinding.getApplicationContext();
     }
@@ -50,7 +50,7 @@ public class ForegroundServicePlugin implements FlutterPlugin, MethodCallHandler
 
 
     void startService(Map<String, Object> notificationDetail) {
-        Intent service = new Intent(context, ForegroundService.class);
+        Intent service = new Intent(context, KeepAliveService.class);
         service.putExtra("notificationDetail", NotificationDetail.fromJson(notificationDetail));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(service);
@@ -60,7 +60,7 @@ public class ForegroundServicePlugin implements FlutterPlugin, MethodCallHandler
     }
 
     void stopService() {
-        Intent service = new Intent(context, ForegroundService.class);
+        Intent service = new Intent(context, KeepAliveService.class);
         context.stopService(service);
         releaseWakeLock();
     }

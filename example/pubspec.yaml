@@ -17,7 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  foreground_service:
+  keep_alive_service:
     # When depending on this package from a real application you should use:
     #   foreground_service: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
