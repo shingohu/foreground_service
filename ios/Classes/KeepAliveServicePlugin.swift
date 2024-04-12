@@ -94,7 +94,12 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         if(self.audioPlayer != nil){
             self.audioPlayer?.stop()
             self.audioPlayer = nil
-            print("stop")
+            do {
+                try AVAudioSession.sharedInstance().setActive(false,options: .notifyOthersOnDeactivation)
+                print("stop")
+            }catch {
+                print(error)
+            }
         }
     }
     
