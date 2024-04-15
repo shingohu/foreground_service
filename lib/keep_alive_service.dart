@@ -23,7 +23,7 @@ class AndroidConfig {
 }
 
 ///保活
-///android上启动一个前台进程
+///android上启动一个前台进程(androids上内存不足的情况下,前台服务也没有用)
 ///iOS上启动一个静音播放
 ///逻辑上业务自己处理
 class KeepAliveService {
@@ -32,6 +32,8 @@ class KeepAliveService {
   KeepAliveService._();
 
   ///启动保活服务
+  ///android 上启动前台服务有些限制
+  ///https://developer.android.google.cn/develop/background-work/services/foreground-services?authuser=3&hl=zh-cn#wiu-restrictions
   static Future<void> start({AndroidConfig? androidConfig}) async {
     _methodChannel.invokeMethod("start", {
       "wakeLock": androidConfig?.wakeLock ?? false,
