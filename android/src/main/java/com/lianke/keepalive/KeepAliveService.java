@@ -83,16 +83,18 @@ public class KeepAliveService extends Service {
 
 
             Notification notification = builder.build();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 //dataSync|mediaPlayback|microphone|connectedDevice|remoteMessaging|location
-                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC;
+                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
                 if (hasLocationPermission()) {
-                    foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
-                } else if (hasMicPermission()) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+                }
+                if (hasMicPermission()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
+                        foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
                     }
                 }
+
                 startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
             } else {
                 startForeground(NOTIFICATION_ID, notification);
