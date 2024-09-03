@@ -85,7 +85,7 @@ public class KeepAliveService extends Service {
             Notification notification = builder.build();
              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 //dataSync|mediaPlayback|microphone|connectedDevice|remoteMessaging|location
-                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
+                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
                 if (hasLocationPermission()) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
                 }
