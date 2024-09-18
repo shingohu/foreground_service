@@ -72,18 +72,18 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
             }
             let avAduioSession = AVAudioSession.sharedInstance()
             let category = avAduioSession.category
-            let mode = avAduioSession.mode
-            try avAduioSession
-                .setCategory(category,
-                             mode: mode,
-                             policy: .default,
-                             options: .mixWithOthers)
+            
+            if(category == .record){
+                return
+            }else if(category != .playAndRecord || category != .playback){
+                try avAduioSession.setCategory(.playback, options: .mixWithOthers);
+            }
             self.audioPlayer = try? AVAudioPlayer(contentsOf: filePathUrl! as URL)
             self.audioPlayer?.prepareToPlay()
             self.audioPlayer?.volume = 0.0
             self.audioPlayer?.numberOfLoops = -1
             self.audioPlayer?.play()
-            print("start")
+            print("start slience aduio");
         } catch{
             print(error)
         }
@@ -94,9 +94,9 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         if(self.audioPlayer != nil){
             self.audioPlayer?.stop()
             self.audioPlayer = nil
+            print("stop slience aduio");
             do {
                 try AVAudioSession.sharedInstance().setActive(false,options: .notifyOthersOnDeactivation)
-                print("stop")
             }catch {
                 print(error)
             }
