@@ -78,6 +78,8 @@ public class KeepAliveService extends Service {
     void startForeground(ForegroundServiceConfig config) {
         try {
             String NOTIFICATION_CHANNEL_ID = getPackageName() + "_foreground_service";
+
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -112,11 +114,17 @@ public class KeepAliveService extends Service {
             if (config.body != null) {
                 body = config.body;
             }
+
+            int visibility = NotificationCompat.VISIBILITY_SECRET;
+            if (config.showOnLockscreens) {
+                visibility = NotificationCompat.VISIBILITY_PUBLIC;
+            }
+
             builder.setNumber(0)
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(false)
                     .setSilent(true)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                    .setVisibility(visibility)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setCategory(NotificationCompat.CATEGORY_SERVICE)
                     .setContentTitle(title)

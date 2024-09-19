@@ -7,11 +7,13 @@ class ForegroundServiceConfig {
   String? title;
   String? body;
   String? icon;
+  bool showOnLockscreens;
 
   ForegroundServiceConfig({
     this.title,
     this.body,
     this.icon,
+    this.showOnLockscreens = false,
   });
 
   Map<String, dynamic> toJson() {
@@ -19,6 +21,7 @@ class ForegroundServiceConfig {
       "title": title,
       "body": body,
       "icon": icon,
+      "showOnLockscreens": showOnLockscreens
     };
   }
 }
