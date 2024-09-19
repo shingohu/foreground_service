@@ -83,7 +83,7 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
             self.audioPlayer?.volume = 0.0
             self.audioPlayer?.numberOfLoops = -1
             self.audioPlayer?.play()
-            print("start slience aduio");
+            print("start play silence audio");
         } catch{
             print(error)
         }
@@ -94,7 +94,7 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         if(self.audioPlayer != nil){
             self.audioPlayer?.stop()
             self.audioPlayer = nil
-            print("stop slience aduio");
+            print("stop play silence audio");
             do {
                 try AVAudioSession.sharedInstance().setActive(false,options: .notifyOthersOnDeactivation)
             }catch {

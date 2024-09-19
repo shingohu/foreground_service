@@ -3,7 +3,6 @@ package com.lianke.keepalive;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.PowerManager;
 
 import androidx.annotation.NonNull;
 
@@ -36,22 +35,24 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if ("start".equals(call.method)) {
-            startService(call.argument("notificationDetail"));
-            if (call.hasArgument("wakeLock")) {
-                boolean wakeLock = call.argument("wakeLock");
-                if (wakeLock) {
-                    acquireWakeLock();
-                }
+            Intent service = new Intent(context, KeepAliveService.class);
+            if (call.hasArgument("foreground")) {
+                service.putExtra("foreground", ForegroundServiceConfig.fromJson(call.argument("foreground")));
+            } else if (call.hasArgument("wakeLock")) {
+                service.putExtra("wakeLock", (boolean) call.argument("wakeLock"));
+            } else if (call.hasArgument("wifiLock")) {
+                service.putExtra("wifiLock", (boolean) call.argument("wifiLock"));
+            } else if (call.hasArgument("playSilence")) {
+                service.putExtra("playSilence", (boolean) call.argument("playSilence"));
             }
+            startService(service);
         } else if ("stop".equals(call.method)) {
             stopService();
         }
     }
 
 
-    void startService(Map<String, Object> notificationDetail) {
-        Intent service = new Intent(context, KeepAliveService.class);
-        service.putExtra("notificationDetail", NotificationDetail.fromJson(notificationDetail));
+    void startService(Intent service) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(service);
         } else {
@@ -62,39 +63,11 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
     void stopService() {
         Intent service = new Intent(context, KeepAliveService.class);
         context.stopService(service);
-        releaseWakeLock();
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
-    }
-
-
-    private PowerManager.WakeLock mWakeLock = null;
-
-    /**
-     * 获取唤醒锁
-     */
-    private void acquireWakeLock() {
-        if (mWakeLock == null) {
-            PowerManager mPM = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            mWakeLock = mPM.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK |
-                    PowerManager.ON_AFTER_RELEASE, context.getPackageName() + ":ForegroundService");
-            if (mWakeLock != null) {
-                mWakeLock.acquire();
-            }
-        }
-    }
-
-    /**
-     * 释放锁
-     */
-    private void releaseWakeLock() {
-        if (mWakeLock != null) {
-            mWakeLock.release();
-            mWakeLock = null;
-        }
     }
 
 }
