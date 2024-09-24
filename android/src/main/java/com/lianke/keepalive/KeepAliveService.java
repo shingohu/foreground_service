@@ -38,39 +38,10 @@ public class KeepAliveService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.hasExtra("playSilence")) {
-            boolean playSilence = intent.getBooleanExtra("playSilence", false);
-            if (playSilence) {
-                startPlaySilence();
-            } else {
-                stopPlaySilence();
-            }
-        }
-
-        if (intent.hasExtra("wakeLock")) {
-            boolean wakeLock = intent.getBooleanExtra("wakeLock", false);
-            if (wakeLock) {
-                acquireWakeLock();
-            } else {
-                releaseWakeLock();
-            }
-        }
-
-        if (intent.hasExtra("wifiLock")) {
-            boolean wifiLock = intent.getBooleanExtra("wifiLock", false);
-            if (wifiLock) {
-                acquireWifiLock();
-            } else {
-                releaseWifiLock();
-            }
-        }
-
         if (intent.hasExtra("foreground")) {
             ForegroundServiceConfig foreground = (ForegroundServiceConfig) intent.getSerializableExtra("foreground");
             startForeground(foreground);
         }
-
-
         return START_NOT_STICKY;
     }
 
@@ -144,7 +115,6 @@ public class KeepAliveService extends Service {
                         foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
                     }
                 }
-
                 startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
             } else {
                 startForeground(NOTIFICATION_ID, notification);
@@ -201,81 +171,12 @@ public class KeepAliveService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             stopForeground(STOP_FOREGROUND_REMOVE);
         }
-        releaseWakeLock();
-        releaseWifiLock();
-        stopPlaySilence();
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-
-    private PowerManager.WakeLock mWakeLock = null;
-
-    /**
-     * 获取唤醒锁
-     */
-    private void acquireWakeLock() {
-        if (mWakeLock == null) {
-            PowerManager mPM = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            mWakeLock = mPM.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getPackageName() + ".wakelock");
-            if (mWakeLock != null) {
-                mWakeLock.acquire();
-            }
-        }
-    }
-
-    /**
-     * 释放锁
-     */
-    private void releaseWakeLock() {
-        if (mWakeLock != null) {
-            mWakeLock.release();
-            mWakeLock = null;
-        }
-    }
-
-    private WifiManager.WifiLock wifiLock;
-
-    private void acquireWifiLock() {
-        if (wifiLock == null) {
-            wifiLock = ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).createWifiLock(WifiManager.WIFI_MODE_FULL, getPackageName() + ".wifilock");
-            if (wifiLock != null) {
-                wifiLock.acquire();
-            }
-        }
-    }
-
-    private void releaseWifiLock() {
-        if (wifiLock != null) {
-            wifiLock.release();
-            wifiLock = null;
-        }
-    }
-
-
-    private MediaPlayer mediaPlayer;
-
-    private void startPlaySilence() {
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(this, R.raw.silence);
-            mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(0, 0);
-            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-            mediaPlayer.setScreenOnWhilePlaying(true);
-            mediaPlayer.start();
-        }
-    }
-
-    private void stopPlaySilence() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
     }
 
 

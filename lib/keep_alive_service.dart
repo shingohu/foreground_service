@@ -48,11 +48,8 @@ class KeepAliveService {
   }
 
   ///[Android]关闭前台服务
-  ///[iOS]停止静音播放
-  static Future<void> stop() async {
+  static Future<void> stopForegroundService() async {
     if (Platform.isAndroid) {
-      _methodChannel.invokeMethod("stop");
-    } else if (Platform.isIOS) {
       _methodChannel.invokeMethod("stop");
     }
   }
