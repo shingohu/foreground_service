@@ -85,9 +85,7 @@ class _MyAppState extends State<MyApp> {
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  KeepAliveService.stop();
-                },
+                onPressed: () {},
                 child: Text("停止"),
               ),
             ],
