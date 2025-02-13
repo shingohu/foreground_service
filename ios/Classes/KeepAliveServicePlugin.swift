@@ -21,7 +21,11 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
     func setUpFilePath()  {
         let myBundle = Bundle(for: Self.self).url(forResource: "keepAliveBundle", withExtension: "bundle")
         if let resourceBundle = Bundle(url: myBundle!) {
-            if let filePath = resourceBundle.path(forResource: "1234567890", ofType: "wav") {
+//            if let filePath = resourceBundle.path(forResource: "1234567890", ofType: "wav") {
+//                filePathUrl = NSURL.init(fileURLWithPath: filePath)
+//            }
+            ///FOR TEST
+            if let filePath = resourceBundle.path(forResource: "test", ofType: "mp3") {
                 filePathUrl = NSURL.init(fileURLWithPath: filePath)
             }
         }
@@ -34,14 +38,10 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         guard let userInfo = notification.userInfo, let reasonValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
         switch reasonValue {
         case AVAudioSession.InterruptionType.began.rawValue://Began
-            self.pause();
             break
         case AVAudioSession.InterruptionType.ended.rawValue://End
-            let optionKey = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
-            if optionKey == AVAudioSession.InterruptionOptions.shouldResume.rawValue {
                 //指示另一个音频会话的中断已结束，本应用程序可以恢复音频。
-                self.play();
-            }
+            self.play();
             break
         default: break
         }
@@ -78,17 +78,15 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         }
         self.audioPlayer = try? AVAudioPlayer(contentsOf: filePathUrl! as URL)
         self.audioPlayer?.prepareToPlay()
-        self.audioPlayer?.volume = 0.0
+        self.audioPlayer?.volume = 0.5
         self.audioPlayer?.numberOfLoops = -1
         self.audioPlayer?.play()
-        print("start play silence audio");
     }
     
     func stop(){
         if(self.audioPlayer != nil){
             self.audioPlayer?.stop()
             self.audioPlayer = nil
-            print("stop play silence audio");
         }
     }
     
@@ -97,7 +95,9 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
     }
     
     func play(){
-        self.audioPlayer?.play()
+        if(self.audioPlayer?.isPlaying != true){
+            self.audioPlayer?.play()
+        }
     }
     
 }
