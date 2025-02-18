@@ -78,7 +78,7 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
         }
         self.audioPlayer = try? AVAudioPlayer(contentsOf: filePathUrl! as URL)
         self.audioPlayer?.prepareToPlay()
-        self.audioPlayer?.volume = 0.5
+        self.audioPlayer?.volume = 0.0
         self.audioPlayer?.numberOfLoops = -1
         self.audioPlayer?.play()
     }
