@@ -21,7 +21,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.PermissionChecker;
 
-import com.lianke.foreground_service.R;
 
 
 public class KeepAliveService extends Service {

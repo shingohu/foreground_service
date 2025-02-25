@@ -9,10 +9,6 @@ import android.os.PowerManager;
 
 import androidx.annotation.NonNull;
 
-import com.lianke.foreground_service.R;
-
-import java.util.Map;
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
