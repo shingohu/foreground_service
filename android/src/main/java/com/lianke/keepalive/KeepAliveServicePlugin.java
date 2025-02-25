@@ -66,7 +66,7 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
                 if (playSilence) {
                     startPlaySilence(context);
                 } else {
-                    stopService();
+                    stopPlaySilence();
                 }
             }
         } else if ("stop".equals(call.method)) {

@@ -1,4 +1,4 @@
-group 'com.lianke.foreground_service'
+group 'com.lianke.keepalive'
 version '1.0'
 
 buildscript {
@@ -22,9 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    if (project.android.hasProperty("namespace")) {
-        namespace 'com.lianke.foreground_service'
-    }
+    namespace 'com.lianke.keepalive'
 
     compileSdk 34
 
