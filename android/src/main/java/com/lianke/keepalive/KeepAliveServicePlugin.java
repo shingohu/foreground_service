@@ -80,8 +80,10 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
     }
 
     void stopService() {
-        Intent service = new Intent(context, KeepAliveService.class);
-        context.stopService(service);
+        if (KeepAliveService.hasStartForegroundService) {
+            Intent service = new Intent(context, KeepAliveService.class);
+            context.stopService(service);
+        }
     }
 
     @Override

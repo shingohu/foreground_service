@@ -22,12 +22,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.PermissionChecker;
 
 
-
 public class KeepAliveService extends Service {
 
     private static final String NOTIFICATION_CHANNEL_NAME = "ForegroundService";
     private static final int NOTIFICATION_ID = 10091;
 
+    public static boolean hasStartForegroundService = false;
 
     @Override
     public void onCreate() {
@@ -118,8 +118,10 @@ public class KeepAliveService extends Service {
             } else {
                 startForeground(NOTIFICATION_ID, notification);
             }
+            hasStartForegroundService = true;
         } catch (Exception e) {
             e.printStackTrace();
+            hasStartForegroundService = false;
         }
     }
 
@@ -168,8 +170,12 @@ public class KeepAliveService extends Service {
 
     void releaseResource() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE);
+            if (hasStartForegroundService) {
+                stopForeground(STOP_FOREGROUND_REMOVE);
+                hasStartForegroundService = false;
+            }
         }
+
     }
 
     @Nullable
