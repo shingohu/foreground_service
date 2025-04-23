@@ -26,6 +26,9 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
     private MethodChannel channel;
     private Context context;
 
+    /// 多引擎实例下,谁创建谁管理
+    private boolean isStartByThisEngine = false;
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "keep_alive_service");
@@ -72,6 +75,7 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
 
 
     void startService(Intent service) {
+        isStartByThisEngine = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(service);
         } else {
@@ -80,9 +84,12 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
     }
 
     void stopService() {
-        if (KeepAliveService.hasStartForegroundService) {
-            Intent service = new Intent(context, KeepAliveService.class);
-            context.stopService(service);
+        if (isStartByThisEngine) {
+            if (KeepAliveService.hasStartForegroundService) {
+                Intent service = new Intent(context, KeepAliveService.class);
+                context.stopService(service);
+            }
+            isStartByThisEngine = false;
         }
     }
 
