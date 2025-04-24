@@ -6,8 +6,11 @@ import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.PowerManager;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import java.io.IOException;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -63,7 +66,8 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
             } else if (call.hasArgument("playSilence")) {
                 boolean playSilence = (boolean) call.argument("playSilence");
                 if (playSilence) {
-                    startPlaySilence(context);
+                    double volume = (double) call.argument("volume");
+                    startPlaySilence(context, volume);
                 } else {
                     stopPlaySilence();
                 }
@@ -149,13 +153,20 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
 
     private MediaPlayer mediaPlayer;
 
-    private void startPlaySilence(Context context) {
+    private void startPlaySilence(Context context, double voulme) {
+
         if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer.create(context, R.raw.silence);
+            mediaPlayer = MediaPlayer.create(context, R.raw.slience_10s);
             mediaPlayer.setLooping(true);
-            mediaPlayer.setVolume(0, 0);
+            mediaPlayer.setVolume((float) voulme, (float) voulme);
             mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
-            mediaPlayer.setScreenOnWhilePlaying(true);
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Log.e("KeepAliveService", "MediaPlayer error: " + what + ", extra: " + extra);
+                    return false;
+                }
+            });
             mediaPlayer.start();
         }
     }

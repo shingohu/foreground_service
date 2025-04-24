@@ -56,7 +56,8 @@ class KeepAliveService {
 
   ///启动循环播放静音音频
   static Future<void> startPlaySilenceAudio({double? volume}) async {
-    volume = volume ?? (Platform.isAndroid ? 0.5 : 0.0);
+    ///由于android 播放静音时,华为不认为你在活动,依旧挂起,所有这里android上采用低频白噪音,音量调到0.01目前是可行的
+    volume = volume ?? (Platform.isAndroid ? 0.01 : 0.0);
     if (Platform.isAndroid) {
       _methodChannel.invokeMethod("start", {
         "playSilence": true,
