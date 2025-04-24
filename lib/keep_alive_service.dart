@@ -55,11 +55,15 @@ class KeepAliveService {
   }
 
   ///启动循环播放静音音频
-  static Future<void> startPlaySilenceAudio() async {
+  static Future<void> startPlaySilenceAudio({double? volume}) async {
+    volume = volume ?? (Platform.isAndroid ? 0.5 : 0.0);
     if (Platform.isAndroid) {
-      _methodChannel.invokeMethod("start", {"playSilence": true});
+      _methodChannel.invokeMethod("start", {
+        "playSilence": true,
+        "volume": volume,
+      });
     } else if (Platform.isIOS) {
-      _methodChannel.invokeMethod("start");
+      _methodChannel.invokeMethod("start", {"volume": volume});
     }
   }
 

@@ -21,13 +21,9 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
     func setUpFilePath()  {
         let myBundle = Bundle(for: Self.self).url(forResource: "keepAliveBundle", withExtension: "bundle")
         if let resourceBundle = Bundle(url: myBundle!) {
-//            if let filePath = resourceBundle.path(forResource: "1234567890", ofType: "wav") {
-//                filePathUrl = NSURL.init(fileURLWithPath: filePath)
-//            }
-            ///FOR TEST
-            if let filePath = resourceBundle.path(forResource: "test", ofType: "mp3") {
-                filePathUrl = NSURL.init(fileURLWithPath: filePath)
-            }
+           if let filePath = resourceBundle.path(forResource: "1234567890", ofType: "wav") {
+               filePathUrl = NSURL.init(fileURLWithPath: filePath)
+           }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(audioAudioChangeListener(_:)), name: AVAudioSession.interruptionNotification, object: nil)
         
@@ -55,7 +51,8 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if(call.method == "start"){
-            start()
+            let volume =  (call.arguments as! Dictionary<String, Any>)["volume"] as! Double
+            start(volume: volume)
             result(true)
         }else if(call.method == "stop"){
             stop()
@@ -64,21 +61,21 @@ public class KeepAliveServicePlugin: NSObject, FlutterPlugin {
     }
     
     
-    func start(){
+    func start(volume:Double){
         
         stop()
         if(filePathUrl == nil){
             return
         }
-        let avAduioSession = AVAudioSession.sharedInstance()
-        let category = avAduioSession.category
+        let avAudioSession = AVAudioSession.sharedInstance()
+        let category = avAudioSession.category
         
         if(category == .record){
             return
         }
         self.audioPlayer = try? AVAudioPlayer(contentsOf: filePathUrl! as URL)
         self.audioPlayer?.prepareToPlay()
-        self.audioPlayer?.volume = 0.0
+        self.audioPlayer?.volume = Float(volume)
         self.audioPlayer?.numberOfLoops = -1
         self.audioPlayer?.play()
     }
