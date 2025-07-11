@@ -159,7 +159,7 @@ public class KeepAliveServicePlugin implements FlutterPlugin, MethodCallHandler 
             mediaPlayer = MediaPlayer.create(context, R.raw.slience_10s);
             mediaPlayer.setLooping(true);
             mediaPlayer.setVolume((float) voulme, (float) voulme);
-            mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
+           // mediaPlayer.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
             mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
