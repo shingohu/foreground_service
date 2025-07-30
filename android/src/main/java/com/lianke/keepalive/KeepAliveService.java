@@ -8,7 +8,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.content.pm.ServiceInfo;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
@@ -20,6 +22,8 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.PermissionChecker;
+
+import java.util.List;
 
 
 public class KeepAliveService extends Service {
@@ -108,45 +112,43 @@ public class KeepAliveService extends Service {
                 int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE;
 
                 //ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
-
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_CAMERA) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_CAMERA)) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA;
                 }
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING) == 0) {
+
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING)) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING;
                 }
 
 
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC)) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC;
                 }
 
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK)) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
                 }
 
 
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE)) {
                     foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
                 }
 
 
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_LOCATION) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_LOCATION)) {
                     if (hasLocationPermission()) {
                         foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
                     }
                 }
-                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_MICROPHONE) == 0) {
+                if (this.hasPermissionInManifest(Manifest.permission.FOREGROUND_SERVICE_MICROPHONE)) {
                     if (hasMicPermission()) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
                         }
                     }
                 }
-                if (foregroundServiceType != 0) {
-                    startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
-                    hasStartForegroundService = true;
-                }
+                startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
+                hasStartForegroundService = true;
             } else {
                 startForeground(NOTIFICATION_ID, notification);
                 hasStartForegroundService = true;
@@ -156,6 +158,30 @@ public class KeepAliveService extends Service {
             e.printStackTrace();
             hasStartForegroundService = false;
         }
+    }
+
+    public static String[] permissions = null;
+
+    public boolean hasPermissionInManifest(String permission) {
+
+        try {
+            if (permissions == null) {
+                PackageManager packageManager = getPackageManager();
+                PackageInfo info = packageManager.getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
+                permissions = info.requestedPermissions;
+            }
+            if (permissions != null) {
+                for (int i = 0; i < permissions.length; i++) {
+                    String name = permissions[i];
+                    if (name.equals(permission)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
     }
 
 
