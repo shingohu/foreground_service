@@ -105,20 +105,53 @@ public class KeepAliveService extends Service {
             Notification notification = builder.build();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 //dataSync|mediaPlayback|microphone|connectedDevice|remoteMessaging|location
-                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
-                if (hasLocationPermission()) {
-                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
+                int foregroundServiceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE;
+
+                //ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
+
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_CAMERA) == 0) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA;
                 }
-                if (hasMicPermission()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING) == 0) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING;
+                }
+
+
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC) == 0) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC;
+                }
+
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK) == 0) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
+                }
+
+
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE) == 0) {
+                    foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
+                }
+
+
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_LOCATION) == 0) {
+                    if (hasLocationPermission()) {
+                        foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION;
                     }
                 }
-                startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
+                if (this.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_MICROPHONE) == 0) {
+                    if (hasMicPermission()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            foregroundServiceType = foregroundServiceType | ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
+                        }
+                    }
+                }
+                if (foregroundServiceType != 0) {
+                    startForeground(NOTIFICATION_ID, notification, foregroundServiceType);
+                    hasStartForegroundService = true;
+                }
             } else {
                 startForeground(NOTIFICATION_ID, notification);
+                hasStartForegroundService = true;
             }
-            hasStartForegroundService = true;
+
         } catch (Exception e) {
             e.printStackTrace();
             hasStartForegroundService = false;

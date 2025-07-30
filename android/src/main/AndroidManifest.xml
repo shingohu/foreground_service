@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lianke.keepalive">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -20,7 +19,7 @@
         <service
             android:name="com.lianke.keepalive.KeepAliveService"
             android:exported="false"
-            android:foregroundServiceType="dataSync|mediaPlayback|microphone|connectedDevice|remoteMessaging|location" />
+            android:foregroundServiceType="dataSync|mediaPlayback|microphone|connectedDevice|remoteMessaging|location|camera" />
     </application>
 
 </manifest>
